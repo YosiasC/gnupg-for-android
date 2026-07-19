@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main, 'restructure/**' ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show repo summary
+        run: |
+          echo "Files in root:"
+          ls -la
+
+      - name: Run formatter (if present)
+        run: |
+          if [ -f ./format-code.sh ]; then
+            chmod +x ./format-code.sh || true
+            ./format-code.sh || (echo "format-code.sh failed; please run locally and fix" && exit 1)
+          else
+            echo "No format-code.sh present, skipping format step."
+          fi
+
+      - name: Sanity checks
+        run: |
+          if [ -f ./make-release-build ]; then
+            echo "Found make-release-build. Full Android builds require NDK/SDK and are NOT run by this CI skeleton." 
+          fi
+          if [ -d jni ] || [ -d external ]; then
+            echo "JNI/external directories detected; native build may be required for full verification." 
+          fi
+
+      - name: Lint / quick diagnostics
+        run: |
+          echo "No language-specific linter configured. Add steps to build/test when you enable proper runners or install NDK/SDK."

@@ -1,0 +1,4 @@
+# CODEOWNERS: define responsables por revisar PRs
+
+# Asigna a YosiasC como revisor por defecto
+* @YosiasC
